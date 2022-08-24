@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.MainScope
 import ru.gb.map.databinding.FragmentMarkersBinding
+import ru.gb.map.ui.MainViewModel
 
 class MarkersFragment : Fragment() {
 
@@ -20,7 +22,7 @@ class MarkersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val markersViewModel =
-            ViewModelProvider(this).get(MarkersViewModel::class.java)
+            ViewModelProvider(this)[MainViewModel::class.java]
 
         _binding = FragmentMarkersBinding.inflate(inflater, container, false)
         val root: View = binding.root

@@ -1,4 +1,4 @@
-package ru.gb.map.ui
+package ru.gb.map
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,5 +22,6 @@ class MainViewModel : ViewModel() {
     fun deletePlaceMarker(marker: PlaceMarker){
         placeMarkerList.remove(marker)
         _liveDataPlaceMarkerForDelete.postValue(marker)
+        _liveDataPlaceMarkersList.postValue(placeMarkerList)
     }
 }

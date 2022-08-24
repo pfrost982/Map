@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.gb.map.ViewModelSaver
 import ru.gb.map.databinding.FragmentMarkersBinding
-import ru.gb.map.ui.MainViewModel
+import ru.gb.map.MainViewModel
+import ru.gb.map.entity.PlaceMarker
 
 class MarkersFragment : Fragment() {
 
@@ -24,7 +25,6 @@ class MarkersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel = (requireActivity() as ViewModelSaver).getViewModel()
-            //ViewModelProvider(this)[MainViewModel::class.java]
         _binding = FragmentMarkersBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -37,7 +37,9 @@ class MarkersFragment : Fragment() {
             requireContext(), LinearLayoutManager
                 .VERTICAL, false
         )
-        val adapter = Adapter { viewModel.deletePlaceMarker(it) }
+        val adapter = Adapter {
+            viewModel.deletePlaceMarker(it)
+        }
         recyclerView.adapter = adapter
         viewModel.liveDataPlaceMarkersList.observe(viewLifecycleOwner) {
             adapter.setMarkerData(it)
@@ -48,4 +50,8 @@ class MarkersFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+}
+
+fun interface DeleteListener {
+    fun onClick(mark: PlaceMarker)
 }

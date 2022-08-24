@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -23,7 +22,7 @@ import ru.gb.map.R
 import ru.gb.map.ViewModelSaver
 import ru.gb.map.databinding.FragmentMapBinding
 import ru.gb.map.entity.PlaceMarker
-import ru.gb.map.ui.MainViewModel
+import ru.gb.map.MainViewModel
 
 
 class MapFragment : Fragment(), InputListener {
@@ -40,7 +39,6 @@ class MapFragment : Fragment(), InputListener {
         savedInstanceState: Bundle?
     ): View {
         viewModel = (requireActivity() as ViewModelSaver).getViewModel()
-            //ViewModelProvider(this)[MainViewModel::class.java]
         MapKitFactory.initialize(requireContext())
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         return binding.root

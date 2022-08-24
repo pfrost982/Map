@@ -9,10 +9,13 @@ import ru.gb.map.entity.PlaceMarker
 class Adapter(private var deleteListener: DeleteListener) :
     RecyclerView.Adapter<Adapter.ViewHolder>() {
 
-    private var markerData: List<PlaceMarker> = listOf()
+    fun interface DeleteListener {
+        fun onClick(mark: PlaceMarker)
+    }
 
+    private var markersData: List<PlaceMarker> = listOf()
     fun setMarkerData(data: List<PlaceMarker>) {
-        markerData = data
+        markersData = data
         notifyDataSetChanged()
     }
 
@@ -22,9 +25,9 @@ class Adapter(private var deleteListener: DeleteListener) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        holder.bind(markerData[position])
+        holder.bind(markersData[position])
 
-    override fun getItemCount(): Int = markerData.size
+    override fun getItemCount(): Int = markersData.size
 
     inner class ViewHolder(private val binding: ItemRecyclerBinding) :
         RecyclerView.ViewHolder(binding.root) {

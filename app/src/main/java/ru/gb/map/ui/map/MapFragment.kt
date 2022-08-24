@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -18,11 +20,12 @@ import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.runtime.image.ImageProvider
+import ru.gb.map.MainViewModel
 import ru.gb.map.R
 import ru.gb.map.ViewModelSaver
+import ru.gb.map.databinding.DialogNewMarkBinding
 import ru.gb.map.databinding.FragmentMapBinding
 import ru.gb.map.entity.PlaceMarker
-import ru.gb.map.MainViewModel
 
 
 class MapFragment : Fragment(), InputListener {
@@ -113,8 +116,30 @@ class MapFragment : Fragment(), InputListener {
     override fun onMapTap(p0: Map, p1: Point) {}
 
     override fun onMapLongTap(p0: Map, p1: Point) {
-        val marker = addPlaceMarker("Marker", p1)
-        viewModel.addPlaceMarker(PlaceMarker("Marker","Description", marker))
+        createNewMark(p1)
+    }
+
+    private fun createNewMark(point: Point) {
+        val dialogView = DialogNewMarkBinding.inflate(layoutInflater)
+        val dialogBuilder = AlertDialog.Builder(requireActivity())
+        dialogBuilder.setView(dialogView.root)
+        val inputName: EditText = dialogView.dialogInputName
+        val inputDescription: EditText = dialogView.dialogInputDescription
+        dialogBuilder
+            .setCancelable(false)
+            .setPositiveButton("Ok") { _, _ ->
+                val marker = addPlaceMarker(inputName.text.toString(), point)
+                viewModel.addPlaceMarker(
+                    PlaceMarker(
+                        inputName.text.toString(),
+                        inputDescription.text.toString(),
+                        marker
+                    )
+                )
+            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
     }
 
     private fun addPlaceMarker(name: String, point: Point): PlacemarkMapObject {

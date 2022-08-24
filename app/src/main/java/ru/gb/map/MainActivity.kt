@@ -15,11 +15,8 @@ class MainActivity : AppCompatActivity(), ViewModelSaver {
     private lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
         MapKitFactory.setApiKey(MAPKIT_API_KEY)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -36,11 +33,11 @@ class MainActivity : AppCompatActivity(), ViewModelSaver {
 
     }
 
+    override fun getViewModel() = viewModel
+
     companion object {
         const val MAPKIT_API_KEY = "9c50e3e6-c556-4d15-9f29-8726601261a4"
     }
-
-    override fun getViewModel() = viewModel
 }
 
 fun interface ViewModelSaver {

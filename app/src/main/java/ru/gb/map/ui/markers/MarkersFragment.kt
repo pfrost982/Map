@@ -7,16 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ru.gb.map.MainViewModel
 import ru.gb.map.ViewModelSaver
 import ru.gb.map.databinding.FragmentMarkersBinding
-import ru.gb.map.MainViewModel
-import ru.gb.map.entity.PlaceMarker
 
 class MarkersFragment : Fragment() {
 
     private var _binding: FragmentMarkersBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var viewModel: MainViewModel
 
     override fun onCreateView(
@@ -31,7 +29,6 @@ class MarkersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val recyclerView: RecyclerView = binding.recyclerview
         recyclerView.layoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager
@@ -50,8 +47,4 @@ class MarkersFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-}
-
-fun interface DeleteListener {
-    fun onClick(mark: PlaceMarker)
 }

@@ -19,9 +19,9 @@ import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.runtime.image.ImageProvider
-import ru.gb.map.PlaceMarker
 import ru.gb.map.R
 import ru.gb.map.databinding.FragmentMapBinding
+import ru.gb.map.entity.PlaceMarker
 import ru.gb.map.ui.MainViewModel
 
 
@@ -29,6 +29,7 @@ class MapFragment : Fragment(), InputListener {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var viewModel: MainViewModel
     private lateinit var mapView: MapView
     private lateinit var userLocationLayer: UserLocationLayer
 
@@ -37,14 +38,11 @@ class MapFragment : Fragment(), InputListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val mapViewModel =
+        viewModel =
             ViewModelProvider(this)[MainViewModel::class.java]
-
         MapKitFactory.initialize(requireContext())
         _binding = FragmentMapBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        mapViewModel.text.observe(viewLifecycleOwner) {}
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,11 +50,13 @@ class MapFragment : Fragment(), InputListener {
 
         mapView = binding.mapview
         mapView.map.isRotateGesturesEnabled = false
-
         mapView.map.addInputListener(this)
+        viewModel.liveDataPlaceMarkerForDelete.observe(viewLifecycleOwner) {
+            binding.mapview.map.mapObjects.remove(it.markMapObject)
+        }
 
-        //binding.mapview.map.mapObjects.remove(placeMark)
         requestLocationPermission()
+
         val mapKit = MapKitFactory.getInstance()
         userLocationLayer = mapKit.createUserLocationLayer(binding.mapview.mapWindow)
         userLocationLayer.isVisible = true
@@ -90,27 +90,6 @@ class MapFragment : Fragment(), InputListener {
         }
     }
 
-    private fun addPlaceMarker(marker: PlaceMarker): PlacemarkMapObject {
-        val placeMark = binding.mapview.map.mapObjects.addPlacemark(marker.point)
-        val textStyle = TextStyle()
-            .setSize(12F)
-            .setColor(Color.BLACK)
-            .setOutlineColor(Color.WHITE)
-            .setPlacement(TextStyle.Placement.BOTTOM)
-        placeMark.setText(marker.name, textStyle)
-
-        val imageProvider = ImageProvider.fromResource(requireActivity(), R.drawable.ic_marker)
-        placeMark.setIcon(
-            imageProvider, IconStyle()
-                .setAnchor(PointF(0.5F, 1.0F))
-                .setRotationType(RotationType.NO_ROTATION)
-                .setScale(0.05F)
-                .setFlat(false)
-                .setZIndex(null)
-        )
-        return placeMark
-    }
-
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
@@ -135,6 +114,28 @@ class MapFragment : Fragment(), InputListener {
     override fun onMapTap(p0: Map, p1: Point) {}
 
     override fun onMapLongTap(p0: Map, p1: Point) {
-        addPlaceMarker(PlaceMarker("Marker", "Description", p1))
+        val marker = addPlaceMarker("Marker", p1)
+        viewModel.addPlaceMarker(PlaceMarker("Marker","Description", marker))
+    }
+
+    private fun addPlaceMarker(name: String, point: Point): PlacemarkMapObject {
+        val placeMark = binding.mapview.map.mapObjects.addPlacemark(point)
+        val textStyle = TextStyle()
+            .setSize(12F)
+            .setColor(Color.BLACK)
+            .setOutlineColor(Color.WHITE)
+            .setPlacement(TextStyle.Placement.BOTTOM)
+        placeMark.setText(name, textStyle)
+
+        val imageProvider = ImageProvider.fromResource(requireActivity(), R.drawable.ic_marker)
+        placeMark.setIcon(
+            imageProvider, IconStyle()
+                .setAnchor(PointF(0.5F, 1.0F))
+                .setRotationType(RotationType.NO_ROTATION)
+                .setScale(0.05F)
+                .setFlat(false)
+                .setZIndex(null)
+        )
+        return placeMark
     }
 }

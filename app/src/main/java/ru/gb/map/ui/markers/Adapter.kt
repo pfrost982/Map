@@ -32,7 +32,7 @@ RecyclerView.Adapter<Adapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemRecyclerBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(mark: PlaceMarker) {
-
+                binding.delete.setOnClickListener {  }
                 binding.title.text = mark.name
                 binding.description.text = mark.description
                 val latitudeItem = "LatitudeItem - ${mark.markMapObject.geometry.latitude}"

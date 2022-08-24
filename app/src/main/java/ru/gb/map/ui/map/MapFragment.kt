@@ -20,6 +20,7 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.runtime.image.ImageProvider
 import ru.gb.map.R
+import ru.gb.map.ViewModelSaver
 import ru.gb.map.databinding.FragmentMapBinding
 import ru.gb.map.entity.PlaceMarker
 import ru.gb.map.ui.MainViewModel
@@ -38,8 +39,8 @@ class MapFragment : Fragment(), InputListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel =
-            ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel = (requireActivity() as ViewModelSaver).getViewModel()
+            //ViewModelProvider(this)[MainViewModel::class.java]
         MapKitFactory.initialize(requireContext())
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         return binding.root

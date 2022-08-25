@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.gb.map.MainViewModel
 import ru.gb.map.ViewModelSaver
+import ru.gb.map.databinding.DialogNewMarkBinding
 import ru.gb.map.databinding.FragmentMarkersBinding
 
 class MarkersFragment : Fragment() {
@@ -34,13 +37,36 @@ class MarkersFragment : Fragment() {
             requireContext(), LinearLayoutManager
                 .VERTICAL, false
         )
-        val adapter = Adapter {
-            viewModel.deletePlaceMarker(it)
-        }
+        val adapter = Adapter(
+            { placeMark ->
+                viewModel.deletePlaceMark(placeMark)
+            },
+            { position ->
+                editMark(position)
+            }
+        )
         recyclerView.adapter = adapter
-        viewModel.liveDataPlaceMarkersList.observe(viewLifecycleOwner) {
-            adapter.setMarkerData(it)
-        }
+        viewModel.liveDataPlaceMarkersList.observe(viewLifecycleOwner) { adapter.setMarksData(it) }
+    }
+
+    private fun editMark(position: Int) {
+        val dialogView = DialogNewMarkBinding.inflate(layoutInflater)
+        val dialogBuilder = AlertDialog.Builder(requireActivity())
+        dialogBuilder.setView(dialogView.root)
+        val inputName: EditText = dialogView.dialogInputName
+        val inputDescription: EditText = dialogView.dialogInputDescription
+        dialogBuilder
+            .setCancelable(false)
+            .setPositiveButton("Ok") { _, _ ->
+                viewModel.updatePlaceMark(
+                    position,
+                    inputName.text.toString(),
+                    inputDescription.text.toString()
+                )
+            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
     }
 
     override fun onDestroyView() {

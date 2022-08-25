@@ -1,5 +1,6 @@
 package ru.gb.map.ui.map
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PointF
@@ -25,7 +26,7 @@ import ru.gb.map.R
 import ru.gb.map.ViewModelSaver
 import ru.gb.map.databinding.DialogNewMarkBinding
 import ru.gb.map.databinding.FragmentMapBinding
-import ru.gb.map.entity.PlaceMarker
+import ru.gb.map.entity.PlaceMark
 
 
 class MapFragment : Fragment(), InputListener {
@@ -53,8 +54,13 @@ class MapFragment : Fragment(), InputListener {
         mapView = binding.mapview
         mapView.map.isRotateGesturesEnabled = false
         mapView.map.addInputListener(this)
-        viewModel.liveDataPlaceMarkerForDelete.observe(viewLifecycleOwner) {
+
+        viewModel.liveDataPlaceMarkForDelete.observe(viewLifecycleOwner) {
             binding.mapview.map.mapObjects.remove(it.markMapObject)
+        }
+
+        viewModel.liveDataPlaceMarkForUpdate.observe(viewLifecycleOwner) {
+            updatePlaceMark(it)
         }
 
         requestLocationPermission()
@@ -66,7 +72,7 @@ class MapFragment : Fragment(), InputListener {
 
         mapView.viewTreeObserver.addOnGlobalLayoutListener {
             userLocationLayer.setAnchor(
-                PointF((binding.root.width * 0.5).toFloat(), (binding.root.height * 0.5).toFloat()),
+                PointF((mapView.width * 0.5).toFloat(), (mapView.height * 0.5).toFloat()),
                 PointF((mapView.width * 0.5).toFloat(), (mapView.height * 0.83).toFloat())
             )
             mapView.map.move(
@@ -75,7 +81,6 @@ class MapFragment : Fragment(), InputListener {
                 null
             )
         }
-
     }
 
     private fun requestLocationPermission() {
@@ -109,17 +114,13 @@ class MapFragment : Fragment(), InputListener {
         _binding = null
     }
 
-    companion object {
-        const val PERMISSIONS_REQUEST_FINE_LOCATION = 1
-    }
-
     override fun onMapTap(p0: Map, p1: Point) {}
 
     override fun onMapLongTap(p0: Map, p1: Point) {
-        createNewMark(p1)
+        createMark(p1)
     }
 
-    private fun createNewMark(point: Point) {
+    private fun createMark(point: Point) {
         val dialogView = DialogNewMarkBinding.inflate(layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireActivity())
         dialogBuilder.setView(dialogView.root)
@@ -128,12 +129,12 @@ class MapFragment : Fragment(), InputListener {
         dialogBuilder
             .setCancelable(false)
             .setPositiveButton("Ok") { _, _ ->
-                val marker = addPlaceMarker(inputName.text.toString(), point)
-                viewModel.addPlaceMarker(
-                    PlaceMarker(
+                val placeMarkMapObject = addPlaceMark(inputName.text.toString(), point)
+                viewModel.addPlaceMark(
+                    PlaceMark(
                         inputName.text.toString(),
                         inputDescription.text.toString(),
-                        marker
+                        placeMarkMapObject
                     )
                 )
             }
@@ -142,24 +143,39 @@ class MapFragment : Fragment(), InputListener {
         alertDialog.show()
     }
 
-    private fun addPlaceMarker(name: String, point: Point): PlacemarkMapObject {
-        val placeMark = binding.mapview.map.mapObjects.addPlacemark(point)
-        val textStyle = TextStyle()
-            .setSize(12F)
-            .setColor(Color.BLACK)
-            .setOutlineColor(Color.WHITE)
-            .setPlacement(TextStyle.Placement.BOTTOM)
-        placeMark.setText(name, textStyle)
-
-        val imageProvider = ImageProvider.fromResource(requireActivity(), R.drawable.ic_marker)
-        placeMark.setIcon(
-            imageProvider, IconStyle()
-                .setAnchor(PointF(0.5F, 1.0F))
-                .setRotationType(RotationType.NO_ROTATION)
-                .setScale(0.05F)
-                .setFlat(false)
-                .setZIndex(null)
-        )
-        return placeMark
+    private fun addPlaceMark(name: String, point: Point): PlacemarkMapObject {
+        val placeMarkMapObject = binding.mapview.map.mapObjects.addPlacemark(point)
+        placeMarkMapObject.addText(name)
+        placeMarkMapObject.addIcon(requireActivity())
+        return placeMarkMapObject
     }
+
+    private fun updatePlaceMark(placeMark: PlaceMark) {
+        placeMark.markMapObject.setText(placeMark.name)
+    }
+
+    companion object {
+        const val PERMISSIONS_REQUEST_FINE_LOCATION = 1
+    }
+}
+
+fun PlacemarkMapObject.addText(name: String) {
+    val textStyle = TextStyle()
+        .setSize(12F)
+        .setColor(Color.BLACK)
+        .setOutlineColor(Color.WHITE)
+        .setPlacement(TextStyle.Placement.BOTTOM)
+    this.setText(name, textStyle)
+}
+
+fun PlacemarkMapObject.addIcon(context: Context) {
+    val imageProvider = ImageProvider.fromResource(context, R.drawable.ic_marker)
+    this.setIcon(
+        imageProvider, IconStyle()
+            .setAnchor(PointF(0.5F, 1.0F))
+            .setRotationType(RotationType.NO_ROTATION)
+            .setScale(0.05F)
+            .setFlat(false)
+            .setZIndex(null)
+    )
 }

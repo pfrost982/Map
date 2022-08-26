@@ -21,7 +21,7 @@ import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.runtime.image.ImageProvider
-import ru.gb.map.MainViewModel
+import ru.gb.map.ui.MainViewModel
 import ru.gb.map.R
 import ru.gb.map.ViewModelSaver
 import ru.gb.map.databinding.DialogNewMarkBinding

@@ -9,8 +9,7 @@ import ru.gb.map.entity.PlaceMark
 class Adapter(
     private val deleteListener: OnDeleteClickListener,
     private val itemListener: OnItemViewClickListener
-) :
-    RecyclerView.Adapter<Adapter.ViewHolder>() {
+) : RecyclerView.Adapter<Adapter.ViewHolder>() {
 
     fun interface OnDeleteClickListener {
         fun onClick(placeMark: PlaceMark)
@@ -20,10 +19,10 @@ class Adapter(
         fun onClick(position: Int)
     }
 
-    private var marksData: List<PlaceMark> = listOf()
+    private var dataList: List<PlaceMark> = listOf()
 
-    fun setMarksData(marksList: List<PlaceMark>) {
-        marksData = marksList
+    fun setData(list: List<PlaceMark>) {
+        dataList = list
         notifyDataSetChanged()
     }
 
@@ -33,11 +32,11 @@ class Adapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(marksData[position])
+        holder.bind(dataList[position])
         holder.itemView.setOnClickListener { itemListener.onClick(position) }
     }
 
-    override fun getItemCount(): Int = marksData.size
+    override fun getItemCount(): Int = dataList.size
 
     inner class ViewHolder(private val binding: ItemRecyclerBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -45,10 +44,8 @@ class Adapter(
             binding.delete.setOnClickListener { deleteListener.onClick(mark) }
             binding.title.text = mark.name
             binding.description.text = mark.description
-            val latitudeItem = "LatitudeItem - ${mark.markMapObject.geometry.latitude}"
-            val longitudeItem = "LongitudeItem - ${mark.markMapObject.geometry.latitude}"
-            binding.latitude.text = latitudeItem
-            binding.longitude.text = longitudeItem
+            binding.latitude.text = "Latitude - ${mark.markMapObject.geometry.latitude}"
+            binding.longitude.text = "Longitude - ${mark.markMapObject.geometry.latitude}"
         }
     }
 }

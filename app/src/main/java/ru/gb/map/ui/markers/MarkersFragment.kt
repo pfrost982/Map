@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ru.gb.map.MainViewModel
+import ru.gb.map.ui.MainViewModel
 import ru.gb.map.ViewModelSaver
 import ru.gb.map.databinding.DialogNewMarkBinding
 import ru.gb.map.databinding.FragmentMarkersBinding
@@ -46,7 +46,7 @@ class MarkersFragment : Fragment() {
             }
         )
         recyclerView.adapter = adapter
-        viewModel.liveDataPlaceMarkersList.observe(viewLifecycleOwner) { adapter.setMarksData(it) }
+        viewModel.liveDataPlaceMarkersList.observe(viewLifecycleOwner) { adapter.setData(it) }
     }
 
     private fun editMark(position: Int) {

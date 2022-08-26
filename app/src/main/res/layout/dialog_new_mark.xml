@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_root"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:layout_margin="8dp">
 
     <TextView
         android:id="@+id/dialog_name"
@@ -15,9 +15,11 @@
 
     <EditText
         android:id="@+id/dialog_input_name"
+        android:hint="Name"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:autofillHints="Name"
+        android:autofillHints=""
         android:inputType="text" />
 
     <TextView
@@ -31,7 +33,9 @@
         android:id="@+id/dialog_input_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:inputType="text" />
+        android:gravity="center"
+        android:hint="Description"
+        android:inputType="text"
+        android:autofillHints="" />
 
 </LinearLayout>

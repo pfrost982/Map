@@ -7,6 +7,7 @@ import androidx.fragment.app.replace
 import androidx.lifecycle.ViewModelProvider
 import com.yandex.mapkit.MapKitFactory
 import ru.gb.map.databinding.ActivityMainBinding
+import ru.gb.map.ui.MainViewModel
 import ru.gb.map.ui.map.MapFragment
 import ru.gb.map.ui.markers.MarkersFragment
 
